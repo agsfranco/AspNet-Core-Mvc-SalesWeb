@@ -8,6 +8,8 @@ namespace SalesWebMvc.Controllers
     {
         public IActionResult Index()
         {
+            ViewData["Message"] = "Welcome to Sales Web MVC!";
+
             return View();
         }
 
