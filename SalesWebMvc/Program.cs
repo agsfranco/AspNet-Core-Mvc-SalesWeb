@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
+using SalesWebMvc.Data;
 using SalesWebMvc.Model;
 namespace SalesWebMvc
 {
@@ -11,8 +13,22 @@ namespace SalesWebMvc
             builder.Services.AddDbContext<SalesWebMvcContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("SalesWebMvcContext") ?? throw new InvalidOperationException("Connection string 'SalesWebMvcContext' not found.")));
 
+
+            builder.Services.AddDbContext<SalesWebMvcContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("SalesWebMvcContext"));
+
+                // Seeding Configuration on EF Core 10
+                options.UseSeeding((context, _) =>
+                {
+                    var seedingService = context.GetService<SeedingService>();
+                    seedingService.Seed();
+                });
+            });
+
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddScoped<SeedingService>();
 
             var app = builder.Build();
 
@@ -22,6 +38,16 @@ namespace SalesWebMvc
                 app.UseExceptionHandler("/Home/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
+            }
+            else 
+            {
+                using (var scope = app.Services.CreateScope())
+                {
+                    var db = scope.ServiceProvider.GetRequiredService<SalesWebMvcContext>();
+                    // Apply pending migrations and create the database if it does not exist, and then seed the database with initial data.
+                    db.Database.Migrate();
+                   
+                }
             }
 
             app.UseHttpsRedirection();
