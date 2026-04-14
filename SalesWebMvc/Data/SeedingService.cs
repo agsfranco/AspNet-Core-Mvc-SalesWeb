@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SalesWebMvc.Model;
 using SalesWebMvc.Models;
 using SalesWebMvc.Models.Enums;
 
