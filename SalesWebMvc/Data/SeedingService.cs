@@ -23,8 +23,6 @@ namespace SalesWebMvc.Data
                 return; // DB has been seeded
             }
 
-
-
             Department d1 = new Department(1, "Computers");
             Department d2 = new Department(2, "Electronics");
             Department d3 = new Department(3, "Fashion");
@@ -68,14 +66,12 @@ namespace SalesWebMvc.Data
             SalesRecord r29 = new SalesRecord(29, new DateTime(2018, 10, 23), 12000.0, SaleStatus.Billed, s5);
             SalesRecord r30 = new SalesRecord(30, new DateTime(2018, 10, 12), 5000.0, SaleStatus.Billed, s2);
 
-
             _context.Database.ExecuteSql($"SET IDENTITY_INSERT Department ON");
             _context.SaveChanges();
             _context.Department.AddRange(d1, d2, d3, d4);
             _context.SaveChanges();
             _context.Database.ExecuteSql($"SET IDENTITY_INSERT Department OFF");
             _context.SaveChanges();
-
 
             _context.Database.ExecuteSql($"SET IDENTITY_INSERT Seller ON");
             _context.SaveChanges();
