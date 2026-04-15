@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace SalesWebMvc.Models
 {
@@ -25,7 +26,7 @@ namespace SalesWebMvc.Models
         [Display(Name="Base Salary")]
         [DataType(DataType.Currency)]
         public double BaseSalary { get; set; }
-
+        
         public Department Department { get; set; }
 
         public int DepartmentId { get; set; }
