@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Validation;
 using System.ComponentModel.DataAnnotations;
 
 namespace SalesWebMvc.Models
@@ -26,7 +27,8 @@ namespace SalesWebMvc.Models
         [Display(Name="Base Salary")]
         [DataType(DataType.Currency)]
         public double BaseSalary { get; set; }
-        
+
+        //[SkipValidation]
         public Department Department { get; set; }
 
         public int DepartmentId { get; set; }

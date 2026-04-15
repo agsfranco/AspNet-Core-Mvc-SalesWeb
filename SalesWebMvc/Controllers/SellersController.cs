@@ -6,6 +6,7 @@ using SalesWebMvc.Models.ViewModels;
 using SalesWebMvc.Services;
 using SalesWebMvc.Services.Exceptions;
 using System.Diagnostics;
+using SalesWebMvc.Models.Constants;
 
 namespace SalesWebMvc.Controllers
 {
@@ -38,6 +39,7 @@ namespace SalesWebMvc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Seller seller)
         {
+            ModelState.Remove(Constants.SkipValidationSellerDepartment);
             if (!ModelState.IsValid)
             {
                 var departments = await _departmentService.FindAllAsync();
@@ -104,6 +106,7 @@ namespace SalesWebMvc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Seller seller)
         {
+            ModelState.Remove(Constants.SkipValidationSellerDepartment);
             if (!ModelState.IsValid)
             {
                 var departments = await _departmentService.FindAllAsync();
