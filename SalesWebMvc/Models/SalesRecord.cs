@@ -6,7 +6,7 @@ namespace SalesWebMvc.Models
     public class SalesRecord
     {
         public int Id { get; set; }
-
+        
         [DataType(DataType.Date)]
         public DateTime Date { get; set; }
 
