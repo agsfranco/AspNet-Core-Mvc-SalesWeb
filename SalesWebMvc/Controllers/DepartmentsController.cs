@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SalesWebMvc.Models;
 using SalesWebMvc.Models.ViewModels;
+using SalesWebMvc.Services;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,32 +14,32 @@ namespace SalesWebMvc.Controllers
 {
     public class DepartmentsController : Controller
     {
-        private readonly SalesWebMvcContext _context;
+        private readonly DepartmentService _departmentService;
 
-        public DepartmentsController(SalesWebMvcContext context)
+        public DepartmentsController(DepartmentService departmentService)
         {
-            _context = context;
+            _departmentService = departmentService;
         }
 
         // GET: Departments
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Department.ToListAsync());
+            var departments = await _departmentService.FindAllAsync();
+            return View(departments);
         }
 
         // GET: Departments/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Error), new { message = "Department not found." });
             }
 
-            var department = await _context.Department
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var department = await _departmentService.FindByIdAsync(id);
             if (department == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Error), new { message = "Department not found." });
             }
 
             return View(department);
@@ -59,25 +60,19 @@ namespace SalesWebMvc.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(department);
-                await _context.SaveChangesAsync();
+                await _departmentService.InsertAsync(department);
                 return RedirectToAction(nameof(Index));
             }
             return View(department);
         }
 
         // GET: Departments/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var department = await _context.Department.FindAsync(id);
+            var department = await _departmentService.FindByIdAsync(id);
             if (department == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Error), new { message = "Department not found." });
             }
             return View(department);
         }
@@ -98,14 +93,13 @@ namespace SalesWebMvc.Controllers
             {
                 try
                 {
-                    _context.Update(department);
-                    await _context.SaveChangesAsync();
+                    await _departmentService.UpdateAsync(department);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!DepartmentExists(department.Id))
                     {
-                        return NotFound();
+                        return RedirectToAction(nameof(Error), new { message = "Department not found." });
                     }
                     else
                     {
@@ -118,18 +112,13 @@ namespace SalesWebMvc.Controllers
         }
 
         // GET: Departments/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            var department = await _departmentService.FindByIdAsync(id);
 
-            var department = await _context.Department
-                .FirstOrDefaultAsync(m => m.Id == id);
             if (department == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Error), new { message = "Department not found." });
             }
 
             return View(department);
@@ -142,16 +131,10 @@ namespace SalesWebMvc.Controllers
         {
             try
             {
-                var department = await _context.Department.FindAsync(id);
-                if (department != null)
-                {
-                    _context.Department.Remove(department);
-                }
-
-                await _context.SaveChangesAsync();
+                await _departmentService.RemoveAsync(id);
                 return RedirectToAction(nameof(Index));
             }
-            catch (DbUpdateException)
+            catch
             {
                 return RedirectToAction(nameof(Error), new { message = "Can't delete department because it has sellers." });
             }
@@ -159,7 +142,7 @@ namespace SalesWebMvc.Controllers
 
         private bool DepartmentExists(int id)
         {
-            return _context.Department.Any(e => e.Id == id);
+            return _departmentService.DepartmentExists(id);
         }
 
         public IActionResult Error(string message)
