@@ -1,0 +1,1 @@
+Pequeno sistema feito na conclusão do curso C# COMPLETO Programação Orientada a Objetos + Projetos, Prof. Nélio Alves (ASP.NET Core 10) incluindo composição, herança, coleções, arquivos, LINQ, lambda, delegates, entre outros.
